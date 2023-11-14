@@ -1,0 +1,8 @@
+E->TX
+X->*ETX
+X->e
+T->FY
+Y->+FY
+Y->E
+F->(E)
+F->i

@@ -1,0 +1,13 @@
+a/
+abb/
+abab/
+abba/
+abbbbb/
+ab/
+b/
+babb/
+abab/
+bab/
+aacc/
+acab/
+abbbbc/
