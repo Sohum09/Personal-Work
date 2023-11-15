@@ -47,7 +47,7 @@ def load_workbook_and_process(file_path, text_widget, plot_frame, button_frame):
     if file_path:
         file_name = file_path.split("/")[-1]
 
-        wb1 = openpyxl.load_workbook('Pesticide data_from April2021.xlsx')
+        wb1 = openpyxl.load_workbook(file_path)
         ws1 = wb1.active
         last_row = ws1.max_row
 
@@ -101,7 +101,8 @@ def load_workbook_and_process(file_path, text_widget, plot_frame, button_frame):
             S_var = 0
             I_var = 0
             cnt = 0
-            for j in range(i, last_row, 7):
+            step_skip = conc_count+1
+            for j in range(i, last_row, step_skip):
                 R_var += ws1['D{}'.format(j)].value
                 G_var += ws1['E{}'.format(j)].value
                 B_var += ws1['F{}'.format(j)].value
