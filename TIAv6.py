@@ -31,17 +31,37 @@ def calc_graph(x, y):
 
     return eqn, r_squared
 
+def calc_graph_plot(x, y):
+    slope, intercept, r, p, std_err = stats.linregress(x, y)
+    
+    def func(x1):
+        return slope * x1 + intercept
+    
+    model_test = list(map(func, x))
+    residuals = y - model_test
+    ss_res = np.sum(residuals**2)
+    ss_tot = np.sum((y - np.mean(y))**2)
+    r_squared = 1 - (ss_res / ss_tot)
+
+    return slope, intercept, std_err, r_squared
+
+
 def plot_scatter_with_trendline(x, y):
     fig, ax = plt.subplots()
     ax.scatter(x, y, label='Data')
-    eqn, r2 = calc_graph(x, y)
-    slope, intercept = np.polyfit(x, y, 1)
+
+    slope, intercept, std_err, r2 = calc_graph_plot(x, y)
     trendline = f'y = {slope:.3f}x + {intercept:.3f}'
     ax.plot(x, slope * np.array(x) + intercept, color='red', label=trendline)
+
+    # Adding error bars
+    ax.errorbar(x, y, yerr=std_err, fmt='none', color='black', capsize=5, label='Error Bars')
+
     ax.legend()
     ax.set_xlabel('Concentration of Pesticide (in PPB)')
     ax.set_ylabel('Test Index Value')
     return fig
+
 
 def load_workbook_and_process(file_path, text_widget, plot_frame, button_frame):
     if file_path:
@@ -102,7 +122,7 @@ def load_workbook_and_process(file_path, text_widget, plot_frame, button_frame):
             I_var = 0
             cnt = 0
             step_skip = conc_count+1
-            for j in range(i, last_row, step_skip):
+            for j in range(i, last_row+1, step_skip):
                 R_var += ws1['D{}'.format(j)].value
                 G_var += ws1['E{}'.format(j)].value
                 B_var += ws1['F{}'.format(j)].value
@@ -132,7 +152,7 @@ def load_workbook_and_process(file_path, text_widget, plot_frame, button_frame):
         #Building up on each Test Index:
 
         # Building up on each Test Index:
-        for i in range(2, last_row):
+        for i in range(2, last_row+1):
             # Test Index 1:
             ws['K{}'.format(i)] = sum([ws['E{}'.format(i)].value, ws['F{}'.format(i)].value, ws['G{}'.format(i)].value])
 
@@ -196,11 +216,11 @@ def load_workbook_and_process(file_path, text_widget, plot_frame, button_frame):
                                  min([ws['B{}'.format(i)].value, ws['C{}'.format(i)].value, ws['D{}'.format(i)].value])) / \
                                 (max([ws['B{}'.format(i)].value, ws['C{}'.format(i)].value, ws['D{}'.format(i)].value]))
 
-        conc = np.array([ws.cell(row=i, column=1).value for i in range(2, last_row)])
+        conc = np.array([ws.cell(row=i, column=1).value for i in range(2, last_row+1)])
         test_indices = list()
 
         for i in range(11, 31):
-            test_index_values = [ws.cell(row=j, column=i).value for j in range(2, last_row)]
+            test_index_values = [ws.cell(row=j, column=i).value for j in range(2, last_row+1)]
             test_indices.append(test_index_values)
         test_indices = np.asarray(test_indices)
 
@@ -232,6 +252,8 @@ def plot_button_click(index, x, y):
     new_window = Toplevel(window)
     new_window.title(f"Plot for T.I. {index + 1}")
 
+    slope, intercept, std_err, r2 = calc_graph_plot(x, y)
+    
     fig = plot_scatter_with_trendline(x, y)
     canvas = FigureCanvasTkAgg(fig, master=new_window)
     canvas.draw()
@@ -243,6 +265,7 @@ def plot_button_click(index, x, y):
         new_window.destroy()
 
     new_window.protocol("WM_DELETE_WINDOW", on_close_fig)
+
 
 # Create a Tkinter window
 window = tk.Tk()
