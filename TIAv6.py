@@ -7,7 +7,6 @@ from scipy import stats
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter import Toplevel
-from openpyxl import Workbook
 
 def open_file_dialog():
     file_path = filedialog.askopenfilename(title="Select Excel File", filetypes=[("Excel files", "*.xlsx;*.xls")])
@@ -149,7 +148,6 @@ def load_workbook_and_process(file_path, text_widget, plot_frame, button_frame):
         ws = wb.active
 
         last_row = ws.max_row
-        #Building up on each Test Index:
 
         # Building up on each Test Index:
         for i in range(2, last_row+1):
@@ -183,7 +181,6 @@ def load_workbook_and_process(file_path, text_widget, plot_frame, button_frame):
             # Test Index 10:
             ws['T{}'.format(i)] = (ws['F{}'.format(i)].value) ** 2
 
-            # ... Continue for other Test Indices ...
             # Test Index 11:
             ws['U{}'.format(i)] = math.tan(ws['F{}'.format(i)].value)
 
