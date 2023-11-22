@@ -263,30 +263,30 @@ def plot_button_click(index, x, y):
 
     new_window.protocol("WM_DELETE_WINDOW", on_close_fig)
 
+if __name__ == "__main__":
+    # Create a Tkinter window
+    window = tk.Tk()
+    window.title("Excel Data Processor")
 
-# Create a Tkinter window
-window = tk.Tk()
-window.title("Excel Data Processor")
+    def on_button_click():
+        file_path = open_file_dialog()
+        load_workbook_and_process(file_path, text_widget, plot_frame, button_frame)
 
-def on_button_click():
-    file_path = open_file_dialog()
-    load_workbook_and_process(file_path, text_widget, plot_frame, button_frame)
+    def on_closing():
+        window.destroy()
 
-def on_closing():
-    window.destroy()
+    window.protocol("WM_DELETE_WINDOW", on_closing)
 
-window.protocol("WM_DELETE_WINDOW", on_closing)
+    button = tk.Button(window, text="Open Excel File", command=on_button_click)
+    button.pack(pady=20)
 
-button = tk.Button(window, text="Open Excel File", command=on_button_click)
-button.pack(pady=20)
+    button_frame = tk.Frame(window)
+    button_frame.pack(side=tk.LEFT, fill=tk.Y)
 
-button_frame = tk.Frame(window)
-button_frame.pack(side=tk.LEFT, fill=tk.Y)
+    text_widget = tk.Text(window, wrap=tk.WORD)
+    text_widget.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
 
-text_widget = tk.Text(window, wrap=tk.WORD)
-text_widget.pack(side=tk.LEFT, expand=True, fill=tk.BOTH)
+    plot_frame = tk.Frame(window)
+    plot_frame.pack(expand=True, fill=tk.BOTH)
 
-plot_frame = tk.Frame(window)
-plot_frame.pack(expand=True, fill=tk.BOTH)
-
-window.mainloop()
+    window.mainloop()   
